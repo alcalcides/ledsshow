@@ -21,7 +21,7 @@ module ledsshow_tb;
 
     initial begin
         $display("running tests");
-        fileLog = $fopen("./log/report2.log");
+        fileLog = $fopen("./log/report3.log");
         registerData;
 
         #1 // 1ps
@@ -80,13 +80,14 @@ module ledsshow_tb;
         #1 // 20ps
         registerData;
 
+        # 1 // 11ps 
         $fclose(fileLog);
         $display("ended");
     end
 
     task registerData; 
         begin
-            $fdisplay(
+            $fstrobe(
                 fileLog, 
                 "pushButton,%b,led,%b", 
                 pushButton, led
