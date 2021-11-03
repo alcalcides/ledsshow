@@ -5,6 +5,7 @@ module ledsshow_tb;
     reg pushButton;
     wire led;
     integer fileLog;
+    integer inpectionsCounter = -1;
 
     ledsshow LEDSSHOW(
         .led(led),
@@ -12,7 +13,7 @@ module ledsshow_tb;
     );
 
     initial  begin
-        $dumpfile("./log/report2.vcd");
+        $dumpfile("./log/report.vcd");
         $dumpvars(0,ledsshow_tb);
         // this only will take effect after perform a "restart"
         // what will make desapper the wave form, I know...
@@ -21,7 +22,8 @@ module ledsshow_tb;
 
     initial begin
         $display("running tests");
-        fileLog = $fopen("./log/report3.log");
+        fileLog = $fopen("./log/report.csv");
+        registerDataHeader;
         registerData;
 
         #1 // 1ps
@@ -80,7 +82,7 @@ module ledsshow_tb;
         #1 // 20ps
         registerData;
 
-        # 1 // 11ps 
+        # 1 // 21ps 
         $fclose(fileLog);
         $display("ended");
     end
@@ -89,8 +91,18 @@ module ledsshow_tb;
         begin
             $fstrobe(
                 fileLog, 
-                "pushButton,%b,led,%b", 
-                pushButton, led
+                "%-d;%b;%b", 
+                inpectionsCounter, pushButton, led
+            );
+            inpectionsCounter = inpectionsCounter + 1;
+        end
+    endtask
+
+    task registerDataHeader; 
+        begin
+            $fdisplay(
+                fileLog, 
+                "inpectionsCounter;pushButton;led"
             );
         end
     endtask
